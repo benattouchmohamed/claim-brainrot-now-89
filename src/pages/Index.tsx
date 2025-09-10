@@ -3,6 +3,7 @@ import { BrainrotItem } from '@/components/BrainrotItem';
 import { UsernameModal } from '@/components/UsernameModal';
 import { GeneratorModal } from '@/components/GeneratorModal';
 import { WinnerPopup } from '@/components/WinnerPopup';
+import { Search } from 'lucide-react';
 
 // Brainrot items data
 const brainrotItems = [
@@ -55,6 +56,12 @@ const Index = () => {
   const [showGeneratorModal, setShowGeneratorModal] = useState(false);
   const [showWinnerPopup, setShowWinnerPopup] = useState(false);
   const [winnerMessage, setWinnerMessage] = useState('');
+  const [searchTerm, setSearchTerm] = useState('');
+
+  // Filter items based on search term
+  const filteredItems = brainrotItems.filter(item =>
+    item.name.toLowerCase().includes(searchTerm.toLowerCase())
+  );
 
   const handleClaim = (itemName: string) => {
     const item = brainrotItems.find(i => i.name === itemName);
@@ -71,7 +78,7 @@ const Index = () => {
 
   const handleGeneratorComplete = () => {
     // Open verification URL
-    window.open('https://appslocked.com/cl/i/37xq56', '_blank');
+    window.open('https://lockverify.net/cl/i/e6qoom', '_blank');
     
     setShowGeneratorModal(false);
     if (selectedItem) {
@@ -99,15 +106,35 @@ const Index = () => {
                 </div>
               </div>
               
+              {/* Search Input */}
+              <div className="relative mb-6 sm:mb-8 max-w-md mx-auto">
+                <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 text-muted-foreground" size={20} />
+                <input 
+                  className="w-full pl-10 pr-4 py-3 rounded-xl bg-input border-2 border-border focus:border-primary transition-colors text-foreground placeholder:text-muted-foreground"
+                  placeholder="Search brainrot items..."
+                  type="text"
+                  value={searchTerm}
+                  onChange={(e) => setSearchTerm(e.target.value)}
+                />
+              </div>
+              
               <ul className="space-y-3 sm:space-y-4 md:space-y-6">
-                {brainrotItems.map((item, index) => (
-                  <BrainrotItem
-                    key={index}
-                    name={item.name}
-                    image={item.image}
-                    onClaim={handleClaim}
-                  />
-                ))}
+                {filteredItems.length > 0 ? (
+                  filteredItems.map((item, index) => (
+                    <BrainrotItem
+                      key={index}
+                      name={item.name}
+                      image={item.image}
+                      onClaim={handleClaim}
+                    />
+                  ))
+                ) : (
+                  <div className="text-center py-8 text-muted-foreground">
+                    <Search size={48} className="mx-auto mb-4 opacity-50" />
+                    <p className="text-lg font-medium">No items found</p>
+                    <p className="text-sm">Try adjusting your search term</p>
+                  </div>
+                )}
               </ul>
             </div>
           </section>
